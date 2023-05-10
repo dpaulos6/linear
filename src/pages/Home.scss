@@ -1,0 +1,27 @@
+.repos{
+  display: flex;
+  flex-direction: column;
+  margin: 2rem;
+  font-size: 14pt;
+  line-height: 1.75;
+  user-select: none;
+
+  & p{
+    width: fit-content;
+    color: rgb(0, 110, 255);
+    cursor: pointer;
+    margin: 0;
+
+    &:hover{
+      color: blue;
+    }
+  }
+}
+
+.linear-search{
+  padding-left: 1rem;
+
+  &:focus{
+    outline: none;
+  }
+}

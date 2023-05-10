@@ -3,6 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@headlessui/react": "^1.7.14",
+    "@heroicons/react": "^2.0.17",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.13.0",
     "@octokit/core": "^4.2.0",
     "@octokit/rest": "^19.0.7",
     "@testing-library/jest-dom": "^5.16.5",
@@ -14,6 +20,8 @@
     "react-helmet": "^6.1.0",
     "react-router-dom": "^6.11.1",
     "react-scripts": "5.0.1",
+    "sass": "^1.62.1",
+    "scss": "^0.2.4",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
