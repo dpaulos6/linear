@@ -1,19 +1,11 @@
-<style>
-  a {
-    text-decoration: none;
-    color: #F51616 !important;
-  }
-
-</style>
-
 # Linear Project
 
-This project consists on a GitHub clone, with a clean and modern design using [GitHub's API][github_api_url]. This project is using [React][react_url] and [Tailwind][tailwind_url]. 
+This project consists on a GitHub clone, with a clean and modern design using [GitHub's API][github_api_url]. This project is using [React][react_url] and [Tailwind][tailwind_url].
 
 **Disclaimer**
 None of the features represented are intended to work, this is purely a redesigned [Version Control System][vcs_url] based on GitHub.
 
-## Todo List:
+## Todo List
 
 - [ ] Fully responsive website
 - [ ] Interactive searching feature with GitHub API
@@ -24,11 +16,14 @@ None of the features represented are intended to work, this is purely a redesign
 
 This projets was solely developed by Diogo Paulos
 
-<a style="display: flex; align-items: center; text-decoration: none;">
-  <img src="/public/github.svg" style="margin-right: .25rem;" /> GitHub
+<a style="display: inline-flex; align-items: center; text-decoration: none;">
+  <img src="/public/github.svg" style="margin-right: .25rem;" /> 
+  GitHub
 </a>
-<a style="display: flex; align-items: center; text-decoration: none;">
-  <img src="/public/instagram.svg" style="margin-right: .25rem;" /> Instagram
+<br/>
+<a style="display: inline-flex; align-items: center; text-decoration: none;">
+  <img src="/public/instagram.svg" style="margin-right: .25rem;" /> 
+  Instagram
 </a>
 
 <!-- Links -->
