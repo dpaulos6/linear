@@ -16,16 +16,6 @@ None of the features represented are intended to work, this is purely a redesign
 
 This projets was solely developed by Diogo Paulos
 
-<a style="display: inline-flex; align-items: center; text-decoration: none;">
-  <img src="/public/github.svg" style="margin-right: .25rem;" /> 
-  GitHub
-</a>
-<br/>
-<a style="display: inline-flex; align-items: center; text-decoration: none;">
-  <img src="/public/instagram.svg" style="margin-right: .25rem;" /> 
-  Instagram
-</a>
-
 <!-- Links -->
 [github_api_url]: https://docs.github.com/en/rest?apiVersion=2022-11-28
 [react_url]: https://reactjs.org/
