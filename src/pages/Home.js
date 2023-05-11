@@ -15,8 +15,6 @@ import './Home.scss';
 
 import { Octokit } from "@octokit/core";
 
-const { client_token } = require('../config.json');
-
 const products = [
   { name: 'Analytics', description: 'Get a better understanding of your traffic', href: '#', icon: ChartPieIcon },
   { name: 'Engagement', description: 'Speak directly to your customers', href: '#', icon: CursorArrowRaysIcon },
@@ -33,47 +31,23 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-async function commitsShow(value){
-  if(value == null){return;}
-  const x = document.querySelector('.commits-list');
-
-  const text = value.full_name;
-  const arr = text.split('/');
-  const owner = arr[0];
-  const repo = arr[1];
-  
-  const octokit = new Octokit({ auth: `${client_token}` });
-  const response = await octokit
-    .request("GET /repos/{owner}/{repo}/commits",{
-      owner: owner, 
-      repo: repo
-    })
-    .catch(error => console.error(error));
-  
-  console.log(response);
-
-  return response.data;
-};
-
 export default function Home(){
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [repos, setRepos] = useState([]);
-  const [commits, setCommits] = useState([]);
-
+  
   useEffect(() => {
-    const octokit = new Octokit({ auth: `${client_token}` });
+    const octokit = new Octokit({ auth: `${process.env.REACT_APP_CLIENT_TOKEN}` });
     octokit
-      .request("GET /user/repos",{
-        type: 'owner',
-      })
-      .then(response => {
-        console.log(response);
-        setRepos(response.data);
-      })
-      .catch(error => console.error(error));
+    .request("GET /user/repos",{
+      type: 'owner',
+    })
+    .then(response => {
+      console.log(response);
+      setRepos(response.data);
+    })
+    .catch(error => console.error(error));
   }, []);
-
-
+  
   return (
     <>
       <header className="bg-white">
@@ -198,10 +172,7 @@ export default function Home(){
 
       <div className="repos">
         {repos.map(item => (
-          <p key={item.id} onClick={async () => {
-            const commitsData = await commitsShow(item);
-            setCommits(commitsData);
-          }}>{item.name}</p>
+          <p key={item.id} data-link={item.full_name}>{item.name}</p>
         ))}
       </div>
       <div className="commits-list">
