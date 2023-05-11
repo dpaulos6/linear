@@ -1,27 +1,38 @@
+body{
+  background-color: #f2f2f2;
+  transition: all 0.3s ease-in-out;
+}
+
 .repos{
+  width: fit-content;
   display: flex;
   flex-direction: column;
-  margin: 2rem;
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-radius: .5rem;
   font-size: 14pt;
   line-height: 1.75;
   user-select: none;
 
   & p{
     width: fit-content;
-    color: rgb(0, 110, 255);
     cursor: pointer;
     margin: 0;
-
-    &:hover{
-      color: blue;
-    }
   }
 }
 
 .linear-search{
   padding-left: 1rem;
+  transition-duration: .3s;
 
   &:focus{
     outline: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  nav, .main-content{
+    padding-left: 7.5% !important;
+    padding-right: 7.5% !important;
   }
 }

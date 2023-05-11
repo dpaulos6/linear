@@ -1,31 +1,22 @@
-import React, { useEffect, useState, Fragment } from 'react'
-import { Dialog, Disclosure, Popover, Transition } from '@headlessui/react'
+import React, { useEffect, useState } from 'react'
+import { Dialog, Disclosure } from '@headlessui/react'
 import {
-  ArrowPathIcon,
   Bars3Icon,
-  ChartPieIcon,
-  CursorArrowRaysIcon,
-  FingerPrintIcon,
-  SquaresPlusIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline'
-import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
+import { 
+  ChevronDownIcon, 
+  UserCircleIcon, 
+  BellIcon, 
+  BellAlertIcon, 
+  MagnifyingGlassIcon, 
+  EyeIcon 
+} from '@heroicons/react/24/outline'
+import { Helmet } from 'react-helmet';
 
 import './Home.scss';
 
 import { Octokit } from "@octokit/core";
-
-const products = [
-  { name: 'Analytics', description: 'Get a better understanding of your traffic', href: '#', icon: ChartPieIcon },
-  { name: 'Engagement', description: 'Speak directly to your customers', href: '#', icon: CursorArrowRaysIcon },
-  { name: 'Security', description: 'Your customers’ data will be safe and secure', href: '#', icon: FingerPrintIcon },
-  { name: 'Integrations', description: 'Connect with third-party tools', href: '#', icon: SquaresPlusIcon },
-  { name: 'Automations', description: 'Build strategic funnels that will convert', href: '#', icon: ArrowPathIcon },
-]
-const callsToAction = [
-  { name: 'Watch demo', href: '#', icon: PlayCircleIcon },
-  { name: 'Contact sales', href: '#', icon: PhoneIcon },
-]
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -50,26 +41,28 @@ export default function Home(){
   
   return (
     <>
-      <header className="bg-white">
-        <nav className="mx-auto flex h-24 max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
-          <div className="flex lg:flex-1">
-            <a href="#" className="">
+
+      <header className="">
+        <nav className="mx-auto flex h-24 items-center border-b-2 border-b-slate-200 p-6 lg:py-6" aria-label="Global">
+          <div className="flex w-12">
+            <a href="#" className="flex mx-auto">
               <span className="sr-only">Your Company</span>
-              <img className="h-8 w-auto mr-12" src="linearlogo_nobg.png" alt="" />
+              <img className="h-8 w-auto" src="linearlogo_nobg.png" alt="" />
             </a>
-            <div className="hidden items-center md:flex md:gap-x-6 lg:gap-x-12">
-              <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-                Pull Requests
-              </a>
-              <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-                Issues
-              </a>
-              <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-                Explore
-              </a>
-            </div>
           </div>
-          <div className="flex lg:hidden">
+          <div className="hidden w-max items-center text-slate-600 px-4 md:flex md:gap-x-6 lg:gap-x-12">
+            <a href="#" className="text-sm font-semibold leading-6 hover:text-slate-800 transition">
+              Pull Requests
+            </a>
+            <a href="#" className="text-sm font-semibold leading-6 hover:text-slate-800 transition">
+              Issues
+            </a>
+            <a href="#" className="text-sm font-semibold leading-6 hover:text-slate-800 transition">
+              Explore
+            </a>
+          </div>
+          {/* Menu Toggler */}
+          <div className="flex ml-auto md:hidden">
             <button
               type="button"
               className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
@@ -79,13 +72,13 @@ export default function Home(){
               <Bars3Icon className="h-6 w-6" aria-hidden="true" />
             </button>
           </div>
-          <div className="hidden min-w-[250px] h-full py-1 items-center lg:flex lg:gap-x-12">
-            <input className='linear-search bg-gray-200/75 rounded-md w-full h-full' type='search' placeholder='Search' />
+          <div className="flex w-full xl:max-w-2xl max-w-lg h-full py-1 items-center lg:gap-x-12">
+            <input className='linear-search hidden lg:flex mx-auto lg:mx-20 bg-gray-200/75 rounded-md w-full h-full' type='search' placeholder='Search' />
+            <MagnifyingGlassIcon className="h-9 w-9 lg:hidden flex-none text-slate-600 cursor-pointer" aria-hidden="true" />
           </div>
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-              Log in <span aria-hidden="true">&rarr;</span>
-            </a>
+          <div className="hidden w-fit md:flex md:flex-1 lg:justify-end">
+            <BellIcon className="h-9 w-9 flex-none  text-slate-600 cursor-pointer" aria-hidden="true" />
+            <UserCircleIcon className="h-9 w-9 flex-none  text-slate-600 cursor-pointer" aria-hidden="true" />
           </div>
         </nav>
         <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
@@ -112,31 +105,6 @@ export default function Home(){
             <div className="mt-6 flow-root">
               <div className="-my-6 divide-y divide-gray-500/10">
                 <div className="space-y-2 py-6">
-                  <Disclosure as="div" className="-mx-3">
-                    {({ open }) => (
-                      <>
-                        <Disclosure.Button className="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 hover:bg-gray-50">
-                          Product
-                          <ChevronDownIcon
-                            className={classNames(open ? 'rotate-180' : '', 'h-5 w-5 flex-none')}
-                            aria-hidden="true"
-                          />
-                        </Disclosure.Button>
-                        <Disclosure.Panel className="mt-2 space-y-2">
-                          {[...products, ...callsToAction].map((item) => (
-                            <Disclosure.Button
-                              key={item.name}
-                              as="a"
-                              href={item.href}
-                              className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                            >
-                              {item.name}
-                            </Disclosure.Button>
-                          ))}
-                        </Disclosure.Panel>
-                      </>
-                    )}
-                  </Disclosure>
                   <a
                     href="#"
                     className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
@@ -170,15 +138,18 @@ export default function Home(){
         </Dialog>
       </header>
 
-      <div className="repos">
-        {repos.map(item => (
-          <p key={item.id} data-link={item.full_name}>{item.name}</p>
-        ))}
-      </div>
-      <div className="commits-list">
-        {/* {commits.map(c => (
-          <p key={c.id}>{c.name}</p>
-        ))} */}
+      <div className='main-content p-6 lg:p-0 lg:py-8'>
+        <div className="repos">
+          {repos.map(item => (
+            <div className='flex flex-row'>
+              <EyeIcon className="h-5 w-5 my-auto mr-2 flex-none cursor-pointer" aria-hidden="true" />
+              <p key={item.id} data-link={item.full_name} className=''>{item.name}</p>
+            </div>
+          ))}
+        </div>
+        <div className='sidebar'>
+          
+        </div>
       </div>
     </>
   );
