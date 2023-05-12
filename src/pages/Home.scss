@@ -1,4 +1,6 @@
 body{
+  max-height: 100vh;
+  overflow: hidden;
   background-color: #f2f2f2;
   transition: all 0.3s ease-in-out;
 }
@@ -10,7 +12,16 @@ body{
 
 .repos{
   width: fit-content;
-  min-width: 350px;
+  height: auto;
+  min-width: 375px;
+  max-height: calc(100vw - (84px + 42px + 42px));
+}
+
+.my-repos{
+  width: 100%;
+  height: fit-content;
+  min-width: 375px;
+  max-height: 410px;
   display: flex;
   flex-direction: column;
   background-color: #ffffff;
@@ -38,6 +49,37 @@ body{
 
 }
 
+.public-repos{
+  width: 100%;
+  height: fit-content;
+  min-width: 375px;
+  max-height: 340px;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  font-size: 14pt;
+  line-height: 1.75;
+  user-select: none;
+
+  .repos-header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 0 1rem 0;
+  }
+
+  .repos-search{
+    height: 35px;
+    margin: .25rem 0 1rem 0;
+    font-size: 12pt;
+
+    &:focus{
+      outline: none;
+    }
+  }
+}
+
 .repo-item{
   width: 100%;
 
@@ -47,25 +89,38 @@ body{
     cursor: pointer;
   }
 
+  .repo-private-icon{
+    transition: all 0.15s ease-in-out;
+    color: rgb(239, 68, 68);
+    cursor: pointer;
+  }
+
   .repo-name{
     transition: all 0.15s ease-in-out;
     color: rgb(59 130 246);
     cursor: pointer;
+    
+    // &:hover {
+    //   .repo-public-icon{
+    //     color: rgb(21 128 61);
+    //   }
+      
+    //   .repo-private-icon{
+    //     color: rgb(185, 28, 28);
+    //   }
+    // }
   }
-  
-  &:hover {
-    .repo-name{
+  .repo-name-url {
+    transition: all .15s ease-in-out;
+    
+    &:hover{
       color: rgb(29 78 216)
-    }
-
-    .repo-public-icon{
-      color: rgb(21 128 61);
     }
   }
 }
 
 .linear-search{
-  padding-left: 1rem;
+  padding: 0 1rem;
   transition-duration: .3s;
 
   &:focus{
@@ -102,6 +157,35 @@ body{
   }
   100% {
     background-color: hsl(200, 20%, 95%);
+  }
+}
+
+.scroll{
+  overflow-y: scroll;
+}
+
+.linear-scroll {
+  &::-webkit-scrollbar {
+    width: .5rem;
+  }
+  
+  /* Track */
+  &::-webkit-scrollbar-track {
+    visibility: hidden;
+    background: #f1f1f1;
+    border-radius: 2rem;
+  }
+  
+  /* Handle */
+  &::-webkit-scrollbar-thumb {
+    background: #999;
+    border-radius: 2rem;
+  }
+  
+  /* Handle on hover */
+  &::-webkit-scrollbar-thumb:hover {
+    background: #777;
+    transition-duration: 150ms;
   }
 }
 

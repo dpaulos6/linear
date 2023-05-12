@@ -10,8 +10,12 @@ import {
   BellIcon, 
   BellAlertIcon, 
   MagnifyingGlassIcon, 
+  CodeBracketIcon,
+  LockClosedIcon,
+  LockOpenIcon,
   EyeIcon,
-  PlusIcon, 
+  EyeSlashIcon,
+  PlusIcon,
 } from '@heroicons/react/24/outline'
 import { Helmet } from 'react-helmet';
 
@@ -25,7 +29,8 @@ function classNames(...classes) {
 
 export default function Home(){
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [repos, setRepos] = useState([]);
+  const [myRepos, setMyRepos] = useState([]);
+  const [publicRepos, setPublicRepos] = useState([]);
   
   useEffect(() => {
     const octokit = new Octokit({ auth: `${process.env.REACT_APP_CLIENT_TOKEN}` });
@@ -35,16 +40,28 @@ export default function Home(){
     })
     .then(response => {
       console.log(response);
-      setRepos(response.data);
+      setMyRepos(response.data);
+    })
+    .catch(error => console.error(error));
+  }, []);
+
+  useEffect(() => {
+    const octokit = new Octokit({ auth: `${process.env.REACT_APP_CLIENT_TOKEN}` });
+    octokit
+    .request("GET /repositories",{
+      
+    })
+    .then(response => {
+      console.log(response);
+      setPublicRepos(response.data);
     })
     .catch(error => console.error(error));
   }, []);
   
   return (
     <>
-
       <header className="">
-        <nav className="mx-auto flex h-24 items-center border-b-2 border-b-slate-200 p-6 lg:py-6" aria-label="Global">
+        <nav className="mx-auto flex h-24 w-full items-center border-b-2 border-b-slate-200 p-6 lg:py-6" aria-label="Global">
           <div className="flex w-12">
             <a href="#" className="flex mx-auto">
               <span className="sr-only">Your Company</span>
@@ -74,10 +91,10 @@ export default function Home(){
             </button>
           </div>
           <div className="flex w-fit lg:w-full lg:max-w-2xl h-full py-1 items-center">
-            <input className='linear-search hidden lg:flex mx-auto lg:mx-20 bg-gray-200/75 rounded-md w-full h-full' type='search' placeholder='Search' />
+            <input className='linear-search hidden lg:flex items-center mx-auto lg:mx-20 bg-gray-200/75 rounded-md w-full h-full' type='search' placeholder='Search' />
             <MagnifyingGlassIcon className="h-9 w-9 lg:hidden flex-none text-slate-600 cursor-pointer" aria-hidden="true" />
           </div>
-          <div className="hidden w-full md:max-w-xs md:flex md:flex-1 md:justify-end">
+          <div className="hidden w-full -md:max-w-xs md:flex md:flex-1 md:justify-end">
             <BellIcon className="h-9 w-9 flex-none  text-slate-600 cursor-pointer" aria-hidden="true" />
             <UserCircleIcon className="h-9 w-9 flex-none  text-slate-600 cursor-pointer" aria-hidden="true" />
           </div>
@@ -139,26 +156,65 @@ export default function Home(){
         </Dialog>
       </header>
 
-      <div className='main-content p-6 py-12 lg:px-0 '>
-        <div className="box repos">
-          <div className='repos-header'>
-            <p className='text-md text-slate-800'>Repositories</p>
-            <button className='inline-flex bg-[#20E75C] px-4 py-2 rounded-md text-xl items-center'>
-              <PlusIcon className="h-5 w-5 mr-1 flex-none  text-white cursor-pointer" aria-hidden="true" />
-              <p className='text-white'>New</p>
-            </button>
-          </div>
-          <div className='repos-search'>
-            <input className='linear-search flex bg-gray-100/75 rounded-md w-full h-full' type='search' placeholder='Search' />
-          </div>
-          {repos.map(item => (
-            <div className='flex flex-row w-full repo-item transition'>
-              <EyeIcon className="repo-public-icon h-5 w-5 my-auto mr-2 flex-none cursor-pointer" aria-hidden="true" />
-              <p key={item.id} data-link={item.full_name} className='repo-name mr-2'>{item.full_name}</p>
-              <p className='hidden lg:flex items-center justify-end text-base text-gray-700/50'>{item.language}</p>
+      <div className='main-content h-full overflow-hidden p-6 py-12 lg:px-0 '>
+        <div className='repos h-full space-y-4'>
+          <div className="box my-repos">
+            <div className='repos-header'>
+              <p className='text-md text-slate-800'>My repositories</p>
+              <button className='inline-flex bg-[#20E75C] px-4 py-2 rounded-md text-xl items-center'>
+                <PlusIcon className="h-5 w-5 mr-1 flex-none  text-white cursor-pointer" aria-hidden="true" />
+                <p className='text-white'>New</p>
+              </button>
             </div>
-          ))}
+            <div className='repos-search'>
+              <input className='linear-search flex text-base bg-slate-100/75 rounded-md w-full h-10' type='search' placeholder='Search' />
+            </div>
+            <div className='scroll linear-scroll pr-4'>
+              {myRepos.map(item => (
+                <div className='flex flex-row w-full repo-item transition'>
+                  {item.private ? (
+                    <EyeSlashIcon className="repo-private-icon h-5 w-5 my-auto mr-2 flex-none cursor-pointer" aria-hidden="true" />
+                  ) : (
+                    <EyeIcon className="repo-public-icon h-5 w-5 my-auto mr-2 flex-none cursor-pointer" aria-hidden="true" />
+                  )}
+                  <img src={item.owner.avatar_url} alt={item.owner.login + " Avatar"} className='flex w-5 h-5 my-auto mr-2 rounded-full' />
+                  <span key={item.id} data-link={item.full_name} className='repo-name mr-2 inline-flex'>
+                    <a href={item.owner.html_url} className='repo-name-url'>{item.owner.login}</a>
+                    <p>/</p>
+                    <a href={item.svn_url} className='repo-name-url'>{item.name}</a>
+                  </span>
+                  <p key={item.language} className='hidden lg:flex items-center justify-end text-base text-gray-700/50'>{item.language}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="box public-repos">
+            <div className='repos-header space-x-4'>
+              <p className='text-md w-full text-slate-800'>Public repositories</p>
+              <input className='linear-search flex text-base bg-slate-100/75 rounded-md w-full h-10' type='search' placeholder='Search' />
+            </div>
+            <div className='scroll linear-scroll pr-4'>
+              {publicRepos.map(item => (
+                <div className='flex flex-row w-full repo-item transition'>
+                  {item.private ? (
+                    <EyeSlashIcon className="repo-private-icon h-5 w-5 my-auto mr-2 flex-none cursor-pointer" aria-hidden="true" />
+                  ) : (
+                    <EyeIcon className="repo-public-icon h-5 w-5 my-auto mr-2 flex-none cursor-pointer" aria-hidden="true" />
+                  )}
+                  <img src={item.owner.avatar_url} alt={item.owner.login + " Avatar"} className='flex w-5 h-5 my-auto mr-2 rounded-full' />
+                  <span key={item.id} data-link={item.full_name} className='repo-name mr-2 inline-flex'>
+                    <a href={item.owner.html_url} className='repo-name-url'>{item.owner.login}</a>
+                    <p>/</p>
+                    <a href={item.svn_url} className='repo-name-url'>{item.name}</a>
+                  </span>
+                  <p key={item.language} className='hidden lg:flex items-center justify-end text-base text-gray-700/50'>{item.language}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
+
         <div className='sidebar'>
           
         </div>
