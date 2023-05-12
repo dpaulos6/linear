@@ -10,7 +10,8 @@ import {
   BellIcon, 
   BellAlertIcon, 
   MagnifyingGlassIcon, 
-  EyeIcon 
+  EyeIcon,
+  PlusIcon, 
 } from '@heroicons/react/24/outline'
 import { Helmet } from 'react-helmet';
 
@@ -72,11 +73,11 @@ export default function Home(){
               <Bars3Icon className="h-6 w-6" aria-hidden="true" />
             </button>
           </div>
-          <div className="flex w-full xl:max-w-2xl max-w-lg h-full py-1 items-center lg:gap-x-12">
+          <div className="flex w-fit lg:w-full lg:max-w-2xl h-full py-1 items-center">
             <input className='linear-search hidden lg:flex mx-auto lg:mx-20 bg-gray-200/75 rounded-md w-full h-full' type='search' placeholder='Search' />
             <MagnifyingGlassIcon className="h-9 w-9 lg:hidden flex-none text-slate-600 cursor-pointer" aria-hidden="true" />
           </div>
-          <div className="hidden w-fit md:flex md:flex-1 lg:justify-end">
+          <div className="hidden w-full md:max-w-xs md:flex md:flex-1 md:justify-end">
             <BellIcon className="h-9 w-9 flex-none  text-slate-600 cursor-pointer" aria-hidden="true" />
             <UserCircleIcon className="h-9 w-9 flex-none  text-slate-600 cursor-pointer" aria-hidden="true" />
           </div>
@@ -138,12 +139,23 @@ export default function Home(){
         </Dialog>
       </header>
 
-      <div className='main-content p-6 lg:p-0 lg:py-8'>
-        <div className="repos">
+      <div className='main-content p-6 py-12 lg:px-0 '>
+        <div className="box repos">
+          <div className='repos-header'>
+            <p className='text-md text-slate-800'>Repositories</p>
+            <button className='inline-flex bg-[#20E75C] px-4 py-2 rounded-md text-xl items-center'>
+              <PlusIcon className="h-5 w-5 mr-1 flex-none  text-white cursor-pointer" aria-hidden="true" />
+              <p className='text-white'>New</p>
+            </button>
+          </div>
+          <div className='repos-search'>
+            <input className='linear-search flex bg-gray-100/75 rounded-md w-full h-full' type='search' placeholder='Search' />
+          </div>
           {repos.map(item => (
-            <div className='flex flex-row'>
-              <EyeIcon className="h-5 w-5 my-auto mr-2 flex-none cursor-pointer" aria-hidden="true" />
-              <p key={item.id} data-link={item.full_name} className=''>{item.name}</p>
+            <div className='flex flex-row w-full repo-item transition'>
+              <EyeIcon className="repo-public-icon h-5 w-5 my-auto mr-2 flex-none cursor-pointer" aria-hidden="true" />
+              <p key={item.id} data-link={item.full_name} className='repo-name mr-2'>{item.full_name}</p>
+              <p className='hidden lg:flex items-center justify-end text-base text-gray-700/50'>{item.language}</p>
             </div>
           ))}
         </div>
