@@ -50,9 +50,7 @@ export default function Home(){
   useEffect(() => {
     const octokit = new Octokit({ auth: `${process.env.REACT_APP_CLIENT_TOKEN}` });
     octokit
-    .request("GET /repositories",{
-      
-    })
+    .request("GET /repositories")
     .then(response => {
       console.log(response);
       setPublicRepos(response.data);
@@ -179,11 +177,11 @@ export default function Home(){
                   ) : (
                     <EyeIcon className="repo-public-icon h-5 w-5 my-auto mr-2 flex-none cursor-pointer" aria-hidden="true" />
                   )}
-                  <img src={item.owner.avatar_url} alt={item.owner.login + " Avatar"} className='flex w-5 h-5 my-auto mr-2 rounded-full' />
+                  <img src={item.owner.avatar_url} alt={item.owner.login + " Avatar"} className='flex w-5 h-5 my-auto mr-2 rounded-full cursor-pointer' />
                   <span key={item.id} data-link={item.full_name} className='repo-name mr-2 inline-flex'>
-                    <Link to={'/Profile?username='+item.owner.login} className='repo-name-url'>{item.owner.login}</Link>
-                    <p>/</p>
-                    <Link to={'/Repo?username='+item.owner.login+'&repoId='+item.name} className='repo-name-url'>{item.name}</Link>
+                    <Link key={item.owner.id} to={'/Profile?username='+item.owner.login} className='repo-name-url'>{item.owner.login}</Link>
+                    <p key={''}>/</p>
+                    <Link key={item.id} to={'/Repo?username='+item.owner.login+'&repoId='+item.name} className='repo-name-url'>{item.name}</Link>
                   </span>
                   <p key={item.language} className='hidden lg:flex items-center justify-end text-base text-gray-700/50'>{item.language}</p>
                 </div>
@@ -206,9 +204,9 @@ export default function Home(){
                   )}
                   <img src={item.owner.avatar_url} alt={item.owner.login + " Avatar"} className='flex w-5 h-5 my-auto mr-2 rounded-full' />
                   <span key={item.id} data-link={item.full_name} className='repo-name mr-2 inline-flex'>
-                    <Link to={'/Profile?username='+item.owner.login} className='repo-name-url'>{item.owner.login}</Link>
-                    <p>/</p>
-                    <Link to={'/Repo?username='+item.owner.login+'&repoId='+item.name} className='repo-name-url'>{item.name}</Link>
+                    <Link key={item.owner.id} to={'/Profile?username='+item.owner.login} className='repo-name-url'>{item.owner.login}</Link>
+                    <p key={''}>/</p>
+                    <Link key={item.id} to={'/Repo?username='+item.owner.login+'&repoId='+item.name} className='repo-name-url'>{item.name}</Link>
                   </span>
                   <p key={item.language} className='hidden lg:flex items-center justify-end text-base text-gray-700/50'>{item.language}</p>
                 </div>
