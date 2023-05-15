@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from "react-router-dom";
+import { Helmet } from 'react-helmet';
+
+import Navbar from '../components/Navbar';
 
 import { Octokit } from "@octokit/core";
 
@@ -22,6 +25,10 @@ export default function Profile(){
 
   return (
     <>
+      <Helmet>
+        <title>Linear - {url.get('username')+"/"+url.get('repo')}</title>
+      </Helmet>
+      <Navbar/>
       <h1>Profile</h1>
     </>
   );
