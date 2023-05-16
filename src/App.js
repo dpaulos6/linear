@@ -5,6 +5,7 @@ import { Helmet } from 'react-helmet';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
 import Repo from './pages/Repo';
+import File from './pages/File';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path='/' element={<Home/>} />
           <Route path='/Profile' element={<Profile/>} />
           <Route path='/Repo' element={<Repo/>} />
+          <Route path='/File' element={<File/>} />
         </Routes>
       </Router>
     </>

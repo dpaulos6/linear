@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import Navbar from '../components/Navbar';
 
 import { Octokit } from "@octokit/core";
 import { Helmet } from 'react-helmet';
+
+import './Repo.scss';
 
 export default function Repo(){
   const [url] = useSearchParams();
@@ -13,7 +15,7 @@ export default function Repo(){
   useEffect(() => {
     const octokit = new Octokit({ auth: `${process.env.REACT_APP_CLIENT_TOKEN}` });
     octokit
-    .request("GET /repos/{owner}/{repo}",{
+    .request("GET /repos/{owner}/{repo}/contents",{
       owner: url.get('username'),
       repo: url.get('repo'),
     })
@@ -22,7 +24,7 @@ export default function Repo(){
       setRepo(response.data);
     })
     .catch(error => console.error(error));
-  }, );
+  }, []);
 
   return (
     <>
@@ -30,7 +32,17 @@ export default function Repo(){
         <title>Linear - {url.get('username')+"/"+url.get('repo')}</title>
       </Helmet>
       <Navbar/>
-      <h1>Repo</h1>
+
+      <div className='m-4 flex flex-col'>
+        {repos.map(item => (
+          <Link 
+            to={"/File?username="+url.get('username')+"&repo="+url.get('repo')+"&file="+item.path+"&type="+item.type}
+            className='text-xl text-blue-500'
+          >
+            {item.name}
+          </Link>
+        ))}
+      </div>
     </>
   );
 }

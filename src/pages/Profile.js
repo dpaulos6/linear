@@ -8,7 +8,7 @@ import { Octokit } from "@octokit/core";
 
 export default function Profile(){
   const [url] = useSearchParams();
-  const [user, setUser] = useState();
+  const [user, setUser] = useState([]);
 
   useEffect(() => {
     const octokit = new Octokit({ auth: `${process.env.REACT_APP_CLIENT_TOKEN}` });
