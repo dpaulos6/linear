@@ -4,11 +4,18 @@ import {
   CodeBracketIcon,
   FolderIcon,
   ExclamationCircleIcon,
+  ShieldCheckIcon,
+  ChartBarIcon,
+  Cog6ToothIcon,
+  BookOpenIcon,
+  Square2StackIcon,
+  ArrowsUpDownIcon,
   LockClosedIcon,
   LockOpenIcon,
   EyeIcon,
   EyeSlashIcon,
   PlusIcon,
+  CubeTransparentIcon,
 } from '@heroicons/react/24/outline'
 
 import Navbar from '../components/Navbar';
@@ -17,6 +24,18 @@ import { Octokit } from "@octokit/core";
 import { Helmet } from 'react-helmet';
 
 import './Repo.scss';
+
+const repoNav = [
+  { name: 'Code', icon: CodeBracketIcon },
+  { name: 'Issues', icon: ExclamationCircleIcon },
+  { name: 'Pull requests', icon: ArrowsUpDownIcon },
+  { name: 'Actions', icon: CubeTransparentIcon },
+  { name: 'Projects', icon: Square2StackIcon },
+  { name: 'Wiki', icon: BookOpenIcon },
+  { name: 'Security', icon: ShieldCheckIcon },
+  { name: 'Insights', icon: ChartBarIcon },
+  { name: 'Settings', icon: Cog6ToothIcon },
+]
 
 export default function Repo(){
   const [url] = useSearchParams();
@@ -52,41 +71,30 @@ export default function Repo(){
             <p className='text-blue-500 font-bold hover:underline cursor-pointer'>{url.get('repo')}</p>
           </span>
           <div className='w-full space-x-2 py-2'>
-            <div className='inline-flex gap-2 text-lg px-2 py-1 rounded-lg cursor-pointer select-none hover:bg-gray-200'>
-              <CodeBracketIcon className='flex w-5 my-auto'/>
-              Code
-            </div>
-            <div className='inline-flex gap-2 text-lg px-2 py-1 rounded-lg cursor-pointer select-none hover:bg-gray-200'>
-              <ExclamationCircleIcon className='flex w-5 my-auto'/>
-              Issues
-            </div>
-            <div className='inline-flex gap-2 text-lg px-2 py-1 rounded-lg cursor-pointer select-none hover:bg-gray-200'>
-              <CodeBracketIcon className='flex w-5 my-auto'/>
-              Code
-            </div>
-            <div className='inline-flex gap-2 text-lg px-2 py-1 rounded-lg cursor-pointer select-none hover:bg-gray-200'>
-              <CodeBracketIcon className='flex w-5 my-auto'/>
-              Code
-            </div>
+            {repoNav.map(item => (
+              <div className='inline-flex gap-2 text-lg px-2 py-1 rounded-lg cursor-pointer select-none hover:bg-gray-200'>
+                <item.icon className='flex w-5 my-auto'/>
+                {item.name}
+              </div>
+            ))}
           </div>
         </div>
 
 
         <div className='repos h-full space-y-4'>
           <div className="box my-repos">
-            <div className='repos-header'>
-              <p className='text-md text-slate-800'>{url.get('repo') + " repository content"}</p>
-            </div>
-            <div className='repos-search'>
-              <input className='linear-search flex text-base bg-slate-100/75 rounded-md w-full h-10' type='search' placeholder='Search' />
+            <div className='repo-content-header space-x-2'>
+              <p className='text-md text-slate-800 font-bold'>username</p>
+              <p className='text-md text-slate-800'>last commit information</p>
             </div>
             <div className='scroll linear-scroll pr-4'>
               {repos.map(item => (
                 <div className='flex flex-row w-full repo-item transition'>
-                  <span key={item.id} data-link={item.full_name} className='repo-name mr-2 inline-flex'>
-                    <Link key={item.id} to={''} className='repo-name-url'>{item.name}</Link>
+                  <span data-link={item.full_name} className='repo-name mr-2 inline-flex'>
+                    <Link key={item.id} 
+                    to={'/File?username='+url.get('username')+'&repo='+url.get('repo')+'&path='+item.path} 
+                    className='repo-name-url'>{item.name}</Link>
                   </span>
-                  <p key={item.language} className='hidden lg:flex items-center justify-end text-base text-gray-700/50'>{item.language}</p>
                 </div>
               ))}
             </div>
