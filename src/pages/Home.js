@@ -85,8 +85,6 @@ export default function Home(){
                   )}
                   <img src={item.owner.avatar_url} alt={item.owner.login + " Avatar"} className='flex w-5 h-5 my-auto mr-2 rounded-full cursor-pointer' />
                   <span key={item.id} data-link={item.full_name} className='repo-name mr-2 inline-flex'>
-                    <Link key={item.owner.id} to={'/Profile?username='+item.owner.login} className='repo-name-url'>{item.owner.login}</Link>
-                    <p key={''}>/</p>
                     <Link key={item.id} to={'/Repo?username='+item.owner.login+'&repo='+item.name} className='repo-name-url'>{item.name}</Link>
                   </span>
                   <p key={item.language} className='hidden lg:flex items-center justify-end text-base text-gray-700/50'>{item.language}</p>
@@ -111,7 +109,7 @@ export default function Home(){
                   <img src={item.owner.avatar_url} alt={item.owner.login + " Avatar"} className='flex w-5 h-5 my-auto mr-2 rounded-full' />
                   <span key={item.id} data-link={item.full_name} className='repo-name mr-2 inline-flex'>
                     <Link key={item.owner.id} to={'/Profile?username='+item.owner.login} className='repo-name-url'>{item.owner.login}</Link>
-                    <p key={''}>/</p>
+                    <p key={''} className='text-gray-300 mx-0.5'>/</p>
                     <Link key={item.id} to={'/Repo?username='+item.owner.login+'&repo='+item.name} className='repo-name-url'>{item.name}</Link>
                   </span>
                   <p key={item.language} className='hidden lg:flex items-center justify-end text-base text-gray-700/50'>{item.language}</p>

@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { useSearchParams } from "react-router-dom";
+import React, { useEffect, useRef, useState } from 'react';
+import { Link, useSearchParams } from "react-router-dom";
 import { TextareaAutosize } from '@mui/material';
+import { LightAsync as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { github, dark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 import Navbar from '../components/Navbar';
 
@@ -13,7 +15,8 @@ export default function Repo(){
   const [url] = useSearchParams();
   const [files, setFiles] = useState([]);
   const [fileBase64String, setFileBase64String] = useState("");
-
+  
+  
   useEffect(() => {
     const octokit = new Octokit({ auth: `${process.env.REACT_APP_CLIENT_TOKEN}` });
     octokit
@@ -54,16 +57,25 @@ export default function Repo(){
       </Helmet>
       <Navbar/>
 
-      <div className='m-4 '>
-        {()=>{
-          if(url.get('type') === 'file'){
-            <textarea value={decodeBase64} className='w-full code-viewer linear-scroll'/>
-          } else {
-            {files.map(item => (
-              <p>{item.name}</p>
-            ))}
-          }
-        }}
+      <div className='flex flex-col'>
+        { 
+          url.get('type')=='file' ? (
+            <div className='m-4'>
+              <SyntaxHighlighter language="markdown" style={github}>
+                {decodeBase64}
+              </SyntaxHighlighter>
+            </div>
+          ) : (
+            files.map((item) => (
+              <Link 
+                to={"/File?username="+url.get('username')+"&repo="+url.get('repo')+"&file="+item.path+"&type="+item.type}
+                className='text-xl text-blue-500'
+              >
+                {item.name}
+              </Link>
+            ))
+          )
+        }
       </div>
     </>
   );
