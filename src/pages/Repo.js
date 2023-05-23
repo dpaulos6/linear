@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { React, Fragment, useEffect, useState } from 'react';
 import { Link, useSearchParams } from "react-router-dom";
+import { Menu, Transition } from '@headlessui/react'
 import { 
+  ChevronDownIcon,
   CodeBracketIcon,
   FolderIcon,
   ExclamationCircleIcon,
@@ -17,6 +19,8 @@ import {
   PlusIcon,
   CubeTransparentIcon,
 } from '@heroicons/react/24/outline'
+import { DiGitBranch } from "react-icons/di";
+import { IoMdArrowDropdown } from "react-icons/io";
 
 import Navbar from '../components/Navbar';
 
@@ -37,12 +41,45 @@ const repoNav = [
   { name: 'Settings', icon: Cog6ToothIcon },
 ]
 
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ')
+}
+
 export default function Repo(){
+  const octokit = new Octokit({ auth: `${process.env.REACT_APP_CLIENT_TOKEN}` });
   const [url] = useSearchParams();
   const [repos, setRepo] = useState([]);
+  const [branches, setBranches] = useState([]);
+  const [commits, setCommits] = useState([]);
+  const [tags, setTags] = useState([]);
+  
+    useEffect(() => {
+      octokit
+      .request("GET /repos/{owner}/{repo}/branches",{
+        owner: url.get('username'),
+        repo: url.get('repo'),
+      })
+      .then(response => {
+        console.log(response);
+        setBranches(response.data);
+      })
+      .catch(error => console.error(error));
+    }, []);
 
   useEffect(() => {
-    const octokit = new Octokit({ auth: `${process.env.REACT_APP_CLIENT_TOKEN}` });
+    octokit
+    .request("GET /repos/{owner}/{repo}/commits",{
+      owner: url.get('username'),
+      repo: url.get('repo'),
+    })
+    .then(response => {
+      console.log(response);
+      setCommits(response.data);
+    })
+    .catch(error => console.error(error));
+  }, []);
+
+  useEffect(() => {
     octokit
     .request("GET /repos/{owner}/{repo}/contents",{
       owner: url.get('username'),
@@ -81,13 +118,83 @@ export default function Repo(){
         </div>
 
 
-        <div className='repos h-full space-y-4'>
-          <div className="box my-repos">
-            <div className='repo-content-header space-x-2'>
-              <p className='text-md text-slate-800 font-bold'>username</p>
-              <p className='text-md text-slate-800'>last commit information</p>
+        <div className='repos h-full space-y-4 mt-6 mx-auto'>
+          <div className='repo-extra inline-flex items-center space-x-4'>
+            <div className=''>
+              <Menu as="div" className="relative inline-block text-left">
+                <div>
+                  <Menu.Button className="inline-flex w-full justify-center items-center gap-x-1.5 rounded-lg bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                    <DiGitBranch className="-mr-1 h-6 w-6 text-gray-500" aria-hidden="true" />
+                    <p className='text-base'>
+                      {branches.map(item => (
+                        <p>
+                          {item.protected == true ? (
+                            item.name
+                          ) : (
+                            ""
+                          )}
+                        </p>
+                      ))}
+                    </p>
+                    <IoMdArrowDropdown className="-mr-1 h-6 w-6 text-gray-400" aria-hidden="true" />
+                  </Menu.Button>
+                </div>
+
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="absolute left-0 z-10 mt-2 min-w-[10rem] w-full origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div className="py-1">
+                      {branches.map(item => (
+                        <Menu.Item>
+                          {({ active }) => (
+                            item.protected != true ? (
+                              <span
+                                className={classNames(
+                                  active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                  'inline-flex w-full px-4 py-2 text-sm cursor-pointer'
+                                )}
+                              >
+                                <>
+                                  <DiGitBranch className="mr-1 h-5 w-5 text-gray-500" aria-hidden="true" />
+                                  <p>{item.name}</p>
+                                </>
+                              </span>
+                              ) : (
+                                <></>
+                              )
+                          )}
+                        </Menu.Item>
+                      ))}
+                    </div>
+                  </Menu.Items>
+                </Transition>
+              </Menu>
             </div>
-            <div className='scroll linear-scroll pr-4'>
+            <div className='inline-flex space-x-1 branch-counter hover:text-blue-600'>
+              <DiGitBranch className="-mr-1 h-6 w-6 text-gray-900" aria-hidden="true" />
+              <p className='font-bold'>{branches.length > 0 ? (branches.length) : ""}</p>
+              <p>branches</p>
+            </div>
+          </div>
+
+          <div className="box repo-files w-full max-w-2xl">
+            <div className='repo-content-header space-x-2 bg-gray-100 p-4 items-center'>
+              {commits.length > 0 ? (
+                <>
+                  <img src={commits[0].author.avatar_url} alt={commits[0].author.login + ' avatar'} className='w-7 h-7' />
+                  <p className='text-lg text-slate-800 font-bold'>{commits[0].author.login}</p>
+                  <p className='text-lg text-slate-800'>{commits[0].commit.message}</p>
+                </>
+              ) : ""}
+            </div>
+            <div className='p-4'>
               {repos.map(item => (
                 <div className='flex flex-row w-full repo-item transition'>
                   <span data-link={item.full_name} className='repo-name mr-2 inline-flex'>
@@ -99,6 +206,7 @@ export default function Repo(){
               ))}
             </div>
           </div>
+
         </div>
       </div>
     </>

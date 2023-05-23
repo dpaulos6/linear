@@ -64,7 +64,7 @@ export default function Home(){
 
       <div className='main-content h-full overflow-hidden p-6 py-12 lg:px-0 '>
         <div className='repos h-full space-y-4'>
-          <div className="box my-repos">
+          <div className="box my-repos p-6">
             <div className='repos-header'>
               <p className='text-md text-slate-800'>My repositories</p>
               <button className='inline-flex bg-[#20E75C] px-4 py-2 rounded-md text-xl items-center'>
@@ -93,7 +93,7 @@ export default function Home(){
             </div>
           </div>
 
-          <div className="box public-repos">
+          <div className="box public-repos p-6">
             <div className='repos-header space-x-4'>
               <p className='text-md w-full text-slate-800'>Public repositories</p>
               <input className='linear-search flex text-base bg-slate-100/75 rounded-md w-full h-10' type='search' placeholder='Search' />
