@@ -19,9 +19,12 @@ import {
   PlusIcon,
   CubeTransparentIcon,
   EllipsisHorizontalIcon,
+  
 } from '@heroicons/react/24/outline'
 import { DiGitBranch } from "react-icons/di";
 import { IoMdArrowDropdown } from "react-icons/io";
+import { MdFolder } from "react-icons/md";
+import { FiFile } from "react-icons/fi";
 
 import { LightAsync as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { defaultStyle } from 'react-syntax-highlighter/dist/esm/styles/hljs';
@@ -129,7 +132,7 @@ export default function Repo(){
         </div>
 
 
-        <div className='repos h-full space-y-4 mt-6 mx-auto'>
+        <div className='w-full max-w-6xl h-full space-y-4 mt-6 mx-auto'>
           <div className='repo-extra inline-flex items-center space-x-4'>
             <div className=''>
               <Menu as="div" className="relative inline-block text-left">
@@ -139,7 +142,7 @@ export default function Repo(){
                     <span className='text-base'>
                       {branches.map(item => (
                         <p key={item.id}>
-                          {item.protected == true ? (
+                          {item.name == "master" ? (
                             item.name
                           ) : (
                             ""
@@ -162,24 +165,34 @@ export default function Repo(){
                 >
                   <Menu.Items className="absolute left-0 z-10 mt-2 min-w-[10rem] w-full origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <div className="py-1">
-                      {branches.map(item => (
+                      {branches
+                        .map(item => (
                         <Menu.Item key={item.id}>
                           {({ active }) => (
-                            item.protected != true ? (
+                            branches.length > 1 ? (
+                              item.name != "master" ? (
+                                <span
+                                  className={classNames(
+                                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                    'inline-flex w-full px-4 py-2 text-sm cursor-pointer'
+                                  )}
+                                >
+                                  <>
+                                    <DiGitBranch className="mr-1 h-5 w-5 text-gray-500" aria-hidden="true" />
+                                    <p>{item.name}</p>
+                                  </>
+                                </span>
+                              ) : <></>
+                            ) : (
                               <span
                                 className={classNames(
                                   active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                   'inline-flex w-full px-4 py-2 text-sm cursor-pointer'
                                 )}
                               >
-                                <>
-                                  <DiGitBranch className="mr-1 h-5 w-5 text-gray-500" aria-hidden="true" />
-                                  <p>{item.name}</p>
-                                </>
+                                <p>No other branches</p>
                               </span>
-                              ) : (
-                                <></>
-                              )
+                            )
                           )}
                         </Menu.Item>
                       ))}
@@ -195,35 +208,54 @@ export default function Repo(){
             </div>
           </div>
 
-          <div className="box repo-files w-full max-w-2xl">
-            <div id='commit-disclosure' className='bg-gray-100'>
+          <div className="box repo-files w-full min -w-2xl">
+            <div id='commit-disclosure' className='bg-white'>
               <div className='repo-content-header space-x-2 p-4 items-center'>
                 {commits.length > 0 ? (
                   <>
-                    <img src={commits[0].author.avatar_url} alt={commits[0].author.login + ' avatar'} className='w-7 h-7 rounded-full' />
+                    <img src={commits[0].author.avatar_url} alt={commits[0].author.login + ' avatar'} className='w-7 h-7 rounded-full overflow-hidden' />
                     <p className='text-lg text-slate-800 font-bold'>{commits[0].author.login}</p>
                     <p className='text-lg text-slate-800'>
                       {commits[0].commit.message.length < 60 ? (
                         commits[0].commit.message
                       ) : (
-                        <button className='bg-gray-200 flex px-1' onClick={()=> openCommitDisclosure(commits[0].commit.message)}>
-                          <EllipsisHorizontalIcon className=" h-6 w-6 text-gray-900" aria-hidden="true" />
-                        </button>
+                        <span className='inline-flex space-x-2 items-center'>
+                          <p className=''>
+                            {commits[0].commit.message.split("\n\n")[0]}
+                          </p>
+                          <p className='ellipsis-expander bg-gray-300 select-none' onClick={()=> openCommitDisclosure()}>
+                            ...
+                          </p>
+                        </span>
                       )}
                     </p>
                   </>
                 ) : ""}
               </div>
-              <div className='hidden commit-disclosure-span space-x-2 p-4 items-center'>
-                <SyntaxHighlighter style={defaultStyle}>
-                  {commits.length > 0 ? commits[0].commit.message : ""}
-                </SyntaxHighlighter>
+              <div className='hidden commit-disclosure-span bg-gray-50 px-16 py-4 items-center'>
+                <p className='font-bold mb-1'>
+                  {commits.length > 0 ? (
+                    commits[0].commit.message.split("\n\n")[0]
+                  ) : ""}
+                </p>
+                <p className='text-gray-600'>
+                  {commits.length > 0 ? (
+                    commits[0].commit.message.split("\n\n")[1]
+                  ) : ""}
+                </p>
               </div>
             </div>
-            <div className='p-4'>
-              {repos.map(item => (
-                <div className='flex flex-row w-full repo-item transition'>
-                  <span data-link={item.full_name} className='repo-name mr-2 inline-flex'>
+            <div className='select-none'>
+              {repos
+                .sort((a, b) => a.type.localeCompare(b.type))
+                .map(item => (
+                <div className='flex flex-col w-full repo-content-item text-blue-400 m-0 text-xl bg-[#f2f2f2] hover:bg-white'>
+                  <span data-link={item.full_name} className='repo-name px-4 py-1 w-full inline-flex items-center space-x-1'>
+                    {item.type == 'file' ? (
+                      <FiFile />
+                    ):(
+                      <MdFolder />
+                    )}
                     <Link key={item.id} 
                     to={'/File?username='+url.get('username')+'&repo='+url.get('repo')+'&path='+item.path} 
                     className='repo-name-url'>{item.name}</Link>

@@ -26,10 +26,67 @@ body{
   overflow: hidden;
 }
 
+.repo-content-item{
+  border-top: 1px solid rgb(209 213 219);
+
+  &:hover a,
+  &:hover svg {
+    color: rgb(59 130 246);
+  }
+
+  .repo-public-icon{
+    transition: all 0.15s ease-in-out;
+    color: rgb(34 197 94);
+    cursor: pointer;
+  }
+
+  .repo-private-icon{
+    transition: all 0.15s ease-in-out;
+    color: rgb(239, 68, 68);
+    cursor: pointer;
+  }
+
+  .repo-name{
+    transition: all 0.15s ease-in-out;
+    cursor: pointer;
+    
+    // &:hover {
+    //   .repo-public-icon{
+    //     color: rgb(21 128 61);
+    //   }
+      
+    //   .repo-private-icon{
+    //     color: rgb(185, 28, 28);
+    //   }
+    // }
+  }
+  .repo-name-url {
+    transition: all .15s ease-in-out;
+    
+    &:hover{
+      color: rgb(29 78 216)
+    }
+  }
+}
+
 .branch-counter{
   cursor: pointer;
 
   &:hover, &:hover svg {
     color: rgb(37 99 235);
   }
+}
+
+.ellipsis-expander {
+  display: inline-block;
+  cursor: pointer;
+  height: 14px;
+  padding: 0 5px 5px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 6px;
+  text-decoration: none;
+  vertical-align: middle;
+  border: 0;
+  border-radius: 1px;
 }
