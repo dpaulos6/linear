@@ -1,6 +1,6 @@
 import { React, Fragment, useEffect, useState } from 'react';
 import { Link, useSearchParams } from "react-router-dom";
-import { Menu, Transition } from '@headlessui/react'
+import { Menu, Transition, Disclosure } from '@headlessui/react'
 import { 
   ChevronDownIcon,
   CodeBracketIcon,
@@ -18,9 +18,13 @@ import {
   EyeSlashIcon,
   PlusIcon,
   CubeTransparentIcon,
+  EllipsisHorizontalIcon,
 } from '@heroicons/react/24/outline'
 import { DiGitBranch } from "react-icons/di";
 import { IoMdArrowDropdown } from "react-icons/io";
+
+import { LightAsync as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { defaultStyle } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 import Navbar from '../components/Navbar';
 
@@ -28,6 +32,7 @@ import { Octokit } from "@octokit/core";
 import { Helmet } from 'react-helmet';
 
 import './Repo.scss';
+import { Button } from '@mui/material';
 
 const repoNav = [
   { name: 'Code', icon: CodeBracketIcon },
@@ -92,6 +97,12 @@ export default function Repo(){
     .catch(error => console.error(error));
   }, []);
 
+  const commitDisclosure = document.querySelector('#commit-disclosure');
+  const commitDisclosureSpan = document.querySelector('.commit-disclosure-span');
+  function openCommitDisclosure(str){
+    commitDisclosureSpan.classList.toggle('hidden');
+  }
+
   return (
     <>
       <Helmet>
@@ -125,9 +136,9 @@ export default function Repo(){
                 <div>
                   <Menu.Button className="inline-flex w-full justify-center items-center gap-x-1.5 rounded-lg bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                     <DiGitBranch className="-mr-1 h-6 w-6 text-gray-500" aria-hidden="true" />
-                    <p className='text-base'>
+                    <span className='text-base'>
                       {branches.map(item => (
-                        <p>
+                        <p key={item.id}>
                           {item.protected == true ? (
                             item.name
                           ) : (
@@ -135,7 +146,7 @@ export default function Repo(){
                           )}
                         </p>
                       ))}
-                    </p>
+                    </span>
                     <IoMdArrowDropdown className="-mr-1 h-6 w-6 text-gray-400" aria-hidden="true" />
                   </Menu.Button>
                 </div>
@@ -152,7 +163,7 @@ export default function Repo(){
                   <Menu.Items className="absolute left-0 z-10 mt-2 min-w-[10rem] w-full origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <div className="py-1">
                       {branches.map(item => (
-                        <Menu.Item>
+                        <Menu.Item key={item.id}>
                           {({ active }) => (
                             item.protected != true ? (
                               <span
@@ -185,14 +196,29 @@ export default function Repo(){
           </div>
 
           <div className="box repo-files w-full max-w-2xl">
-            <div className='repo-content-header space-x-2 bg-gray-100 p-4 items-center'>
-              {commits.length > 0 ? (
-                <>
-                  <img src={commits[0].author.avatar_url} alt={commits[0].author.login + ' avatar'} className='w-7 h-7' />
-                  <p className='text-lg text-slate-800 font-bold'>{commits[0].author.login}</p>
-                  <p className='text-lg text-slate-800'>{commits[0].commit.message}</p>
-                </>
-              ) : ""}
+            <div id='commit-disclosure' className='bg-gray-100'>
+              <div className='repo-content-header space-x-2 p-4 items-center'>
+                {commits.length > 0 ? (
+                  <>
+                    <img src={commits[0].author.avatar_url} alt={commits[0].author.login + ' avatar'} className='w-7 h-7 rounded-full' />
+                    <p className='text-lg text-slate-800 font-bold'>{commits[0].author.login}</p>
+                    <p className='text-lg text-slate-800'>
+                      {commits[0].commit.message.length < 60 ? (
+                        commits[0].commit.message
+                      ) : (
+                        <button className='bg-gray-200 flex px-1' onClick={()=> openCommitDisclosure(commits[0].commit.message)}>
+                          <EllipsisHorizontalIcon className=" h-6 w-6 text-gray-900" aria-hidden="true" />
+                        </button>
+                      )}
+                    </p>
+                  </>
+                ) : ""}
+              </div>
+              <div className='hidden commit-disclosure-span space-x-2 p-4 items-center'>
+                <SyntaxHighlighter style={defaultStyle}>
+                  {commits.length > 0 ? commits[0].commit.message : ""}
+                </SyntaxHighlighter>
+              </div>
             </div>
             <div className='p-4'>
               {repos.map(item => (
