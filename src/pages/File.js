@@ -29,7 +29,6 @@ export default function Repo(){
       if(str === 'match') return false;
       const pathExt = path.split('.')[1]
       pathExt.includes(item.toLowerCase()) ? str = 'match' : str = ""
-      console.log(pathExt, item.toLowerCase(), str)
     })
     return str
   }
@@ -44,7 +43,6 @@ export default function Repo(){
     })
     .then(response => {
       console.log(response);
-      console.log(getFileType())
       setFile(response.data);
       setFileBase64String(getFileType() !== 'match' ? response.data.content : "");
     })
@@ -99,9 +97,7 @@ export default function Repo(){
               </div>
             </div>
             <div className=''>
-              {()=>{
-                let verify = getFileType()
-                verify !== 'match' ? (
+              {getFileType() !== 'match' ? (
                   <SyntaxHighlighter language={path.split(".")[1]} style={github} className="w-full">
                     {decodeBase64}
                   </SyntaxHighlighter>
@@ -109,7 +105,7 @@ export default function Repo(){
                   <div className='flex items-center'>
                     <img src={file.download_url} alt={file.name} className='flex mx-auto' />
                   </div>
-                )}
+                )
               }
             </div>
           </div>
