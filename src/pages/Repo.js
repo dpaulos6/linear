@@ -38,15 +38,15 @@ import './Repo.scss';
 import { Button } from '@mui/material';
 
 const repoNav = [
-  { name: 'Code', icon: CodeBracketIcon },
-  { name: 'Issues', icon: ExclamationCircleIcon },
-  { name: 'Pull requests', icon: ArrowsUpDownIcon },
-  { name: 'Actions', icon: CubeTransparentIcon },
-  { name: 'Projects', icon: Square2StackIcon },
-  { name: 'Wiki', icon: BookOpenIcon },
-  { name: 'Security', icon: ShieldCheckIcon },
-  { name: 'Insights', icon: ChartBarIcon },
-  { name: 'Settings', icon: Cog6ToothIcon },
+  { name: 'Code', icon: CodeBracketIcon, active: true },
+  { name: 'Issues', icon: ExclamationCircleIcon, active: false },
+  { name: 'Pull requests', icon: ArrowsUpDownIcon, active: false },
+  { name: 'Actions', icon: CubeTransparentIcon, active: false },
+  { name: 'Projects', icon: Square2StackIcon, active: false },
+  { name: 'Wiki', icon: BookOpenIcon, active: false },
+  { name: 'Security', icon: ShieldCheckIcon, active: false },
+  { name: 'Insights', icon: ChartBarIcon, active: false },
+  { name: 'Settings', icon: Cog6ToothIcon, active: false },
 ]
 
 function classNames(...classes) {
@@ -59,26 +59,29 @@ export default function Repo(){
   const [repos, setRepo] = useState([]);
   const [branches, setBranches] = useState([]);
   const [commits, setCommits] = useState([]);
-  const [tags, setTags] = useState([]);
+
+  const owner = url.get('username');
+  const repo = url.get('repo');
+  const path = url.get('path');
   
-    useEffect(() => {
-      octokit
-      .request("GET /repos/{owner}/{repo}/branches",{
-        owner: url.get('username'),
-        repo: url.get('repo'),
-      })
-      .then(response => {
-        console.log(response);
-        setBranches(response.data);
-      })
-      .catch(error => console.error(error));
-    }, []);
+  useEffect(() => {
+    octokit
+    .request("GET /repos/{owner}/{repo}/branches",{
+      owner: owner,
+      repo: repo,
+    })
+    .then(response => {
+      console.log(response);
+      setBranches(response.data);
+    })
+    .catch(error => console.error(error));
+  }, []);
 
   useEffect(() => {
     octokit
     .request("GET /repos/{owner}/{repo}/commits",{
-      owner: url.get('username'),
-      repo: url.get('repo'),
+      owner: owner,
+      repo: repo,
     })
     .then(response => {
       console.log(response);
@@ -89,9 +92,10 @@ export default function Repo(){
 
   useEffect(() => {
     octokit
-    .request("GET /repos/{owner}/{repo}/contents",{
-      owner: url.get('username'),
-      repo: url.get('repo'),
+    .request("GET /repos/{owner}/{repo}/contents/{path}",{
+      owner: owner,
+      repo: repo,
+      path: path ? path : "",
     })
     .then(response => {
       console.log(response);
@@ -100,10 +104,14 @@ export default function Repo(){
     .catch(error => console.error(error));
   }, []);
 
-  const commitDisclosure = document.querySelector('#commit-disclosure');
   const commitDisclosureSpan = document.querySelector('.commit-disclosure-span');
-  function openCommitDisclosure(str){
+  function openCommitDisclosure(){
     commitDisclosureSpan.classList.toggle('hidden');
+  }
+
+  function openFolderAccordion(str){
+    const folderAccordion = document.getElementById('#'+str);
+    folderAccordion.classList.toggle('hidden');
   }
 
   return (
@@ -124,8 +132,17 @@ export default function Repo(){
           <div className='w-full space-x-2 py-2'>
             {repoNav.map(item => (
               <div className='inline-flex gap-2 text-lg px-2 py-1 rounded-lg cursor-pointer select-none hover:bg-gray-200'>
-                <item.icon className='flex w-5 my-auto'/>
-                {item.name}
+                {item.active === true ? (
+                  <>
+                    <item.icon className='flex text-blue-600 w-5 my-auto'/>
+                    <p className='text-blue-600'>{item.name}</p>
+                  </>
+                ) : (
+                  <>
+                    <item.icon className='flex w-5 my-auto'/>
+                    <p>{item.name}</p>
+                  </>
+                )}
               </div>
             ))}
           </div>
@@ -142,7 +159,7 @@ export default function Repo(){
                     <span className='text-base'>
                       {branches.map(item => (
                         <p key={item.id}>
-                          {item.name == "master" ? (
+                          {item.name === "master" ? (
                             item.name
                           ) : (
                             ""
@@ -170,7 +187,7 @@ export default function Repo(){
                         <Menu.Item key={item.id}>
                           {({ active }) => (
                             branches.length > 1 ? (
-                              item.name != "master" ? (
+                              item.name !== "master" ? (
                                 <span
                                   className={classNames(
                                     active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
@@ -223,7 +240,7 @@ export default function Repo(){
                           <p className=''>
                             {commits[0].commit.message.split("\n\n")[0]}
                           </p>
-                          <p className='ellipsis-expander bg-gray-300 select-none' onClick={()=> openCommitDisclosure()}>
+                          <p className='ellipsis-expander bg-gray-200 select-none' onClick={()=> openCommitDisclosure()}>
                             ...
                           </p>
                         </span>
@@ -247,24 +264,105 @@ export default function Repo(){
             </div>
             <div className='select-none'>
               {repos
-                .sort((a, b) => a.type.localeCompare(b.type))
-                .map(item => (
-                <div className='flex flex-col w-full repo-content-item text-blue-400 m-0 text-xl bg-[#f2f2f2] hover:bg-white'>
-                  <span data-link={item.full_name} className='repo-name px-4 py-1 w-full inline-flex items-center space-x-1'>
-                    {item.type == 'file' ? (
-                      <FiFile />
-                    ):(
-                      <MdFolder />
-                    )}
-                    <Link key={item.id} 
-                    to={'/File?username='+url.get('username')+'&repo='+url.get('repo')+'&path='+item.path} 
-                    className='repo-name-url'>{item.name}</Link>
-                  </span>
-                </div>
+              .sort((a, b) => a.type.localeCompare(b.type))
+              .map(item => (
+                <>
+                  {item.type === 'dir' ? (
+                    <a
+                      className='flex flex-col w-full repo-content-item text-blue-400 m-0 text-xl bg-[#f2f2f2] hover:bg-white'
+                      href={'/Repo?username='+url.get('username')+'&repo='+url.get('repo')+'&path='+item.path}
+                    >
+                      <span 
+                        data-link={item.full_name} 
+                        className='repo-name px-4 py-1 w-full inline-flex items-center space-x-1'
+                      >
+                          <>
+                            <MdFolder />
+                            <p className=''>{item.name}</p>
+                          </>
+                      </span>
+                    </a>
+                  ):(
+                    <a 
+                      className='flex flex-col w-full repo-content-item text-blue-400 m-0 text-xl bg-[#f2f2f2] hover:bg-white'
+                      href={'/File?username='+url.get('username')+'&repo='+url.get('repo')+'&path='+item.path}
+                    >
+                      <span 
+                        data-link={item.full_name} 
+                        className='repo-name px-4 py-1 w-full inline-flex items-center space-x-1'
+                      >
+                          <>
+                            <FiFile />
+                            <p className=''>{item.name}</p>
+                          </>
+                      </span>
+                    </a>
+                  )}
+                  <>
+                    {/* {item.type === 'dir' ? (
+                      <div id="folder-accordion" className='hidden'>
+                        <div className='flex flex-col w-full repo-content-item text-blue-400 m-0 text-lg bg-[#ececec] hover:bg-white/75'>
+                          <span 
+                            data-link={item.full_name} 
+                            className='repo-name px-4 pl-8 py-1 w-full inline-flex items-center space-x-1'
+                          >
+                            <MdFolder />
+                            <Link key={item.id} 
+                            to={'/File?username='+url.get('username')+'&repo='+url.get('repo')+'&path='+item.path} 
+                            className='repo-name-url'>Folder 1</Link>
+                          </span>
+                        </div>
+                        <div className='flex flex-col w-full repo-content-item text-blue-400 m-0 text-lg bg-[#ececec] hover:bg-white/75'>
+                          <span 
+                            data-link={item.full_name} 
+                            className='repo-name px-4 pl-8 py-1 w-full inline-flex items-center space-x-1'
+                          >
+                            <FiFile />
+                            <Link key={item.id} 
+                            to={'/File?username='+url.get('username')+'&repo='+url.get('repo')+'&path='+item.path} 
+                            className='repo-name-url'>File 1</Link>
+                          </span>
+                        </div>
+                        <div className='flex flex-col w-full repo-content-item text-blue-400 m-0 text-lg bg-[#ececec] hover:bg-white/75'>
+                          <span 
+                            data-link={item.full_name} 
+                            className='repo-name px-4 pl-8 py-1 w-full inline-flex items-center space-x-1'
+                          >
+                            <FiFile />
+                            <Link key={item.id} 
+                            to={'/File?username='+url.get('username')+'&repo='+url.get('repo')+'&path='+item.path} 
+                            className='repo-name-url'>File 2</Link>
+                          </span>
+                        </div>
+                        <div className='flex flex-col w-full repo-content-item text-blue-400 m-0 text-lg bg-[#ececec] hover:bg-white/75'>
+                          <span 
+                            data-link={item.full_name} 
+                            className='repo-name px-4 pl-8 py-1 w-full inline-flex items-center space-x-1'
+                          >
+                            <FiFile />
+                            <Link key={item.id} 
+                            to={'/File?username='+url.get('username')+'&repo='+url.get('repo')+'&path='+item.path} 
+                            className='repo-name-url'>File 3</Link>
+                          </span>
+                        </div>
+                        <div className='flex flex-col w-full repo-content-item text-blue-400 m-0 text-lg bg-[#ececec] hover:bg-white/75'>
+                          <span 
+                            data-link={item.full_name} 
+                            className='repo-name px-4 pl-8 py-1 w-full inline-flex items-center space-x-1'
+                          >
+                            <FiFile />
+                            <Link key={item.id} 
+                            to={'/File?username='+url.get('username')+'&repo='+url.get('repo')+'&path='+item.path} 
+                            className='repo-name-url'>File 4</Link>
+                          </span>
+                        </div>
+                      </div>
+                    ) : null} */}
+                  </>
+                </>
               ))}
             </div>
           </div>
-
         </div>
       </div>
     </>

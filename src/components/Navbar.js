@@ -16,7 +16,7 @@ export default function Navbar(){
   return (
     <>
       <header className="">
-        <nav className="mx-auto flex h-24 w-full items-center border-b-2 border-b-slate-200 p-6 lg:py-6" aria-label="Global">
+        <nav id='navbar' className="flex h-24 w-full items-center bg-white p-6 lg:py-6" aria-label="Global">
           <div className="flex w-12">
             <a href="/" className="flex mx-auto">
               <span className="sr-only">Your Company</span>
