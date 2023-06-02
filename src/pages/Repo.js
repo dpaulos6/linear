@@ -1,8 +1,7 @@
 import { React, Fragment, useEffect, useState } from 'react';
-import { Link, useSearchParams } from "react-router-dom";
-import { Menu, Transition, Disclosure } from '@headlessui/react'
+import { useSearchParams } from "react-router-dom";
+import { Menu, Transition } from '@headlessui/react'
 import { 
-  ChevronDownIcon,
   CodeBracketIcon,
   FolderIcon,
   ExclamationCircleIcon,
@@ -12,22 +11,12 @@ import {
   BookOpenIcon,
   Square2StackIcon,
   ArrowsUpDownIcon,
-  LockClosedIcon,
-  LockOpenIcon,
-  EyeIcon,
-  EyeSlashIcon,
-  PlusIcon,
   CubeTransparentIcon,
-  EllipsisHorizontalIcon,
-  
 } from '@heroicons/react/24/outline'
 import { DiGitBranch } from "react-icons/di";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { MdFolder } from "react-icons/md";
 import { FiFile } from "react-icons/fi";
-
-import { LightAsync as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { defaultStyle } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 import Navbar from '../components/Navbar';
 
@@ -35,7 +24,6 @@ import { Octokit } from "@octokit/core";
 import { Helmet } from 'react-helmet';
 
 import './Repo.scss';
-import { Button } from '@mui/material';
 
 const repoNav = [
   { name: 'Code', icon: CodeBracketIcon, active: true },
@@ -71,11 +59,10 @@ export default function Repo(){
       repo: repo,
     })
     .then(response => {
-      console.log(response);
       setBranches(response.data);
     })
     .catch(error => console.error(error));
-  }, []);
+  }, );
 
   useEffect(() => {
     octokit
@@ -84,11 +71,10 @@ export default function Repo(){
       repo: repo,
     })
     .then(response => {
-      console.log(response);
       setCommits(response.data);
     })
     .catch(error => console.error(error));
-  }, []);
+  }, );
 
   useEffect(() => {
     octokit
@@ -98,21 +84,18 @@ export default function Repo(){
       path: path ? path : "",
     })
     .then(response => {
-      console.log(response);
       setRepo(response.data);
     })
     .catch(error => console.error(error));
-  }, []);
+  }, );
 
   const commitDisclosureSpan = document.querySelector('.commit-disclosure-span');
   function openCommitDisclosure(){
     commitDisclosureSpan.classList.toggle('hidden');
   }
 
-  function openFolderAccordion(str){
-    const folderAccordion = document.getElementById('#'+str);
-    folderAccordion.classList.toggle('hidden');
-  }
+  const fileName = path ? path.split('/')[path.split('/').length-1] : ""
+  const splitPath = path ? path.split('/') : ""
 
   return (
     <>
@@ -124,10 +107,23 @@ export default function Repo(){
       <div className='h-full'>
         <div className='w-full flex flex-col pt-4 px-12 border-b-2'>
           <span className='inline-flex my-2 text-2xl'>
-            <FolderIcon className='flex w-5 mr-2 my-auto'/>
-            <p className='text-blue-500 hover:underline cursor-pointer'>{url.get('username')}</p>
+            <FolderIcon className='flex text-blue-500 w-5 mr-2 my-auto'/>
+            <p className='text-blue-500 hover:underline cursor-pointer'>{owner}</p>
             <p className='text-gray-300 mx-0.5'>/</p>
-            <p className='text-blue-500 font-bold hover:underline cursor-pointer'>{url.get('repo')}</p>
+            {path ? (
+              <>
+                <p className='text-blue-500 hover:underline cursor-pointer'>{repo}</p>
+                {splitPath.map(item => (
+                  <>
+                    <p className='text-gray-300 mx-0.5'>/</p>
+                    {item === fileName 
+                      ? <p className='text-blue-500 font-semibold hover:underline cursor-pointer'>{item}</p>
+                      : <p className='text-blue-500 hover:underline cursor-pointer'>{item}</p>
+                    }
+                  </>
+                ))}
+              </>
+            ) : <p className='text-blue-500 font-semibold hover:underline cursor-pointer'>{repo}</p>}
           </span>
           <div className='w-full space-x-2 py-2'>
             {repoNav.map(item => (
@@ -147,7 +143,6 @@ export default function Repo(){
             ))}
           </div>
         </div>
-
 
         <div className='w-full max-w-6xl h-full space-y-4 mt-6 mx-auto'>
           <div className='repo-extra inline-flex items-center space-x-4'>
