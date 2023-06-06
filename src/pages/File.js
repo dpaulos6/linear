@@ -61,7 +61,7 @@ export default function Repo(){
       setBranches(response.data);
     })
     .catch(error => console.error(error));
-  }, );
+  }, []);
 
   useEffect(() => {
     octokit
@@ -73,7 +73,7 @@ export default function Repo(){
       setCommits(response.data);
     })
     .catch(error => console.error(error));
-  }, );
+  }, []);
 
   useEffect(() => {
     octokit
@@ -87,7 +87,7 @@ export default function Repo(){
       setFileBase64String(getFileType() !== 'match' ? response.data.content : "");
     })
     .catch(error => console.error(error));
-  }, );
+  }, []);
 
   function getFileType() {
     let str = ""

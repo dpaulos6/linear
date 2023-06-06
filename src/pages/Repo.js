@@ -62,7 +62,7 @@ export default function Repo(){
       setBranches(response.data);
     })
     .catch(error => console.error(error));
-  }, );
+  }, []);
 
   useEffect(() => {
     octokit
@@ -74,7 +74,7 @@ export default function Repo(){
       setCommits(response.data);
     })
     .catch(error => console.error(error));
-  }, );
+  }, []);
 
   useEffect(() => {
     octokit
@@ -87,7 +87,7 @@ export default function Repo(){
       setRepo(response.data);
     })
     .catch(error => console.error(error));
-  }, );
+  }, []);
 
   const commitDisclosureSpan = document.querySelector('.commit-disclosure-span');
   function openCommitDisclosure(){
